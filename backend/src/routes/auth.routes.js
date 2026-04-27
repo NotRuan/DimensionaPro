@@ -2,6 +2,19 @@ const router = require('express').Router()
 const { login, refresh, register } = require('../services/auth.service')
 const { ERRORS } = require('../utils/errors')
 
+const isProduction = process.env.NODE_ENV === 'production'
+const refreshCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+}
+const clearRefreshCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'strict',
+}
+
 // POST /api/auth/login
 router.post('/login', async (req, res, next) => {
   try {
@@ -10,12 +23,7 @@ router.post('/login', async (req, res, next) => {
       return res.status(422).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'E-mail e senha são obrigatórios' } })
     }
     const result = await login(email, senha)
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+    res.cookie('refreshToken', result.refreshToken, refreshCookieOptions)
     res.json({ success: true, data: { accessToken: result.accessToken, usuario: result.usuario } })
   } catch (err) {
     next(err)
@@ -36,12 +44,7 @@ router.post('/register', async (req, res, next) => {
       return res.status(422).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'Senha deve ter ao menos 6 caracteres' } })
     }
     const result = await register(nome, email, senha, perfil || 'CONSULTOR')
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+    res.cookie('refreshToken', result.refreshToken, refreshCookieOptions)
     res.status(201).json({ success: true, data: { accessToken: result.accessToken, usuario: result.usuario } })
   } catch (err) {
     if (err.code === 'EMAIL_ALREADY_EXISTS') {
@@ -65,7 +68,7 @@ router.post('/refresh', async (req, res, next) => {
 
 // POST /api/auth/logout
 router.post('/logout', (req, res) => {
-  res.clearCookie('refreshToken')
+  res.clearCookie('refreshToken', clearRefreshCookieOptions)
   res.json({ success: true, message: 'Logout realizado' })
 })
 

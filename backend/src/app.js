@@ -5,6 +5,10 @@ const cookieParser = require('cookie-parser')
 const app = express()
 
 const ALLOWED_ORIGINS = [
+  ...(process.env.FRONTEND_URLS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   process.env.FRONTEND_URL || 'http://localhost:5173',
   'http://localhost:5174',
 ]

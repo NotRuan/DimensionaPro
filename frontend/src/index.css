@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-teal-100 text-teal-950;
+  }
+}
+
+@layer components {
+  .app-surface {
+    @apply bg-white border border-slate-200 shadow-sm;
+  }
+
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2;
+  }
+}

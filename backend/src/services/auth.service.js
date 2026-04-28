@@ -11,7 +11,7 @@ async function login(email, senha) {
     .single()
 
   if (error || !usuario) throw ERRORS.AUTH_INVALID_CREDENTIALS()
-  if (!usuario.ativo) throw ERRORS.AUTH_INVALID_CREDENTIALS('Usuário inativo')
+  if (!usuario.ativo) throw ERRORS.AUTH_INVALID_CREDENTIALS('Usuario inativo')
 
   const senhaValida = await bcrypt.compare(senha, usuario.senha_hash)
   if (!senhaValida) throw ERRORS.AUTH_INVALID_CREDENTIALS()
@@ -51,46 +51,4 @@ async function refresh(refreshToken) {
   }
 }
 
-async function register(nome, email, senha, perfil = 'CONSULTOR') {
-  const PERFIS_VALIDOS = ['CONSULTOR', 'GERENTE', 'ADM']
-  if (!PERFIS_VALIDOS.includes(perfil)) {
-    throw ERRORS.VALIDATION_ERROR('Perfil inválido')
-  }
-
-  const { data: existente } = await supabase
-    .from('usuarios')
-    .select('id')
-    .eq('email', email.toLowerCase().trim())
-    .maybeSingle()
-
-  if (existente) {
-    const err = new Error('E-mail já cadastrado')
-    err.statusCode = 409
-    err.code = 'EMAIL_ALREADY_EXISTS'
-    throw err
-  }
-
-  const senha_hash = await bcrypt.hash(senha, 10)
-
-  const { data: novo, error } = await supabase
-    .from('usuarios')
-    .insert({ nome: nome.trim(), email: email.toLowerCase().trim(), senha_hash, perfil, ativo: true })
-    .select('id, nome, email, perfil')
-    .single()
-
-  if (error) throw new Error('Erro ao criar usuário')
-
-  const payload = { sub: novo.id, nome: novo.nome, email: novo.email, perfil: novo.perfil }
-
-  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '8h',
-  })
-
-  const refreshToken = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-  })
-
-  return { accessToken, refreshToken, usuario: novo }
-}
-
-module.exports = { login, refresh, register }
+module.exports = { login, refresh }

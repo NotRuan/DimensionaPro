@@ -5,6 +5,7 @@ import { ToastProvider } from './components/ui/Toast'
 import { router } from './router'
 import configuracoesService from './services/configuracoes.service'
 import { useConfiguracoesStore } from './store/configuracoesStore'
+import { useDimensionamentoStore } from './store/dimensionamentoStore'
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30_000 } } })
 
@@ -14,7 +15,13 @@ function ConfigLoader() {
   useEffect(() => {
     const carregarConfiguracoes = () => {
       configuracoesService.buscar()
-        .then(res => setConfiguracoes(res.data))
+        .then(res => {
+          setConfiguracoes(res.data)
+          useDimensionamentoStore.getState().recalcularPrestadores({
+            tabela: res.data.coeficientes,
+            coefSeguranca: res.data.parametros_gerais?.coef_seguranca,
+          })
+        })
         .catch(() => {}) // fallback to hardcoded defaults silently
     }
 

@@ -20,7 +20,6 @@ export function Sidebar() {
   return (
     <aside className="w-64 bg-slate-950 text-white flex flex-col min-h-full">
       <div className="h-16 border-b border-slate-800 px-4 flex items-center gap-3">
-        <div className="h-9 w-9 rounded-lg bg-teal-500 text-slate-950 font-bold flex items-center justify-center">DP</div>
         <div>
           <p className="font-semibold leading-tight">DimensionaPro</p>
           <p className="text-xs text-slate-400">Capacity Intelligence</p>

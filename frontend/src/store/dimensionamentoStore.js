@@ -104,6 +104,20 @@ export const useDimensionamentoStore = create((set, get) => ({
 
   limparPrestadores: () => set({ prestadores: [], demanda: '', resultado: null }),
 
+  recalcularPrestadores: (config) => set(s => {
+    const prestadores = s.prestadores.map(p => {
+      const hasVolume = p.volume_mawdy != null && p.volume_mawdy !== ''
+      const hasProfissionais = p.qtd_profissionais != null && p.qtd_profissionais !== ''
+      const hasVolumetria = p.volumetria_total != null && p.volumetria_total !== ''
+      if (!hasVolume || !hasProfissionais || !hasVolumetria) return p
+
+      const calc = calcularPrestador(p, config)
+      return { ...p, ...calc, status: 'completo' }
+    })
+    const resultado = s.demanda ? calcularIndiceCidade(prestadores, s.demanda) : s.resultado
+    return { prestadores, resultado }
+  }),
+
   duplicarPrestador: (id) => set(s => {
     const idx = s.prestadores.findIndex(p => p._id === id)
     if (idx === -1) return s

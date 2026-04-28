@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { login, refresh, register } = require('../services/auth.service')
+const { login, refresh } = require('../services/auth.service')
 const { ERRORS } = require('../utils/errors')
 
 const isProduction = process.env.NODE_ENV === 'production'
@@ -15,12 +15,11 @@ const clearRefreshCookieOptions = {
   sameSite: isProduction ? 'none' : 'strict',
 }
 
-// POST /api/auth/login
 router.post('/login', async (req, res, next) => {
   try {
     const { email, senha } = req.body
     if (!email || !senha) {
-      return res.status(422).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'E-mail e senha são obrigatórios' } })
+      return res.status(422).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'E-mail e senha sao obrigatorios' } })
     }
     const result = await login(email, senha)
     res.cookie('refreshToken', result.refreshToken, refreshCookieOptions)
@@ -30,31 +29,20 @@ router.post('/login', async (req, res, next) => {
   }
 })
 
-// POST /api/auth/register
 router.post('/register', async (req, res, next) => {
   try {
-    const { nome, email, senha, confirmarSenha, perfil } = req.body
-    if (!nome || !email || !senha) {
-      return res.status(422).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'Nome, e-mail e senha são obrigatórios' } })
-    }
-    if (senha !== confirmarSenha) {
-      return res.status(422).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'As senhas não coincidem' } })
-    }
-    if (senha.length < 6) {
-      return res.status(422).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'Senha deve ter ao menos 6 caracteres' } })
-    }
-    const result = await register(nome, email, senha, perfil || 'CONSULTOR')
-    res.cookie('refreshToken', result.refreshToken, refreshCookieOptions)
-    res.status(201).json({ success: true, data: { accessToken: result.accessToken, usuario: result.usuario } })
+    res.status(403).json({
+      success: false,
+      error: {
+        code: 'PUBLIC_REGISTER_DISABLED',
+        message: 'Cadastro publico desativado. Solicite a criacao do usuario ao ADM.',
+      },
+    })
   } catch (err) {
-    if (err.code === 'EMAIL_ALREADY_EXISTS') {
-      return res.status(409).json({ success: false, error: { code: err.code, message: err.message } })
-    }
     next(err)
   }
 })
 
-// POST /api/auth/refresh
 router.post('/refresh', async (req, res, next) => {
   try {
     const refreshToken = req.cookies?.refreshToken
@@ -66,7 +54,6 @@ router.post('/refresh', async (req, res, next) => {
   }
 })
 
-// POST /api/auth/logout
 router.post('/logout', (req, res) => {
   res.clearCookie('refreshToken', clearRefreshCookieOptions)
   res.json({ success: true, message: 'Logout realizado' })

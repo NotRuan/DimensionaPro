@@ -1,11 +1,11 @@
-import { getCoeficiente, getCoeficienteFromTabela, COEF_SEGURANCA } from './coeficientes'
+import { getCoeficiente, getCoeficienteFromTabela, COEF_SEGURANCA } from './coeficientes.js'
 
 export function calcularPrestador(dados, config = {}) {
   const {
     qtd_profissionais, servicos_por_dia = 6,
     volume_mawdy, volumetria_total, tipo_servico,
     pct_recusas, reclamacoes_ratio, tempo_chegada_min,
-    pct_deslocamento, pct_reembolso, nps,
+    pct_deslocamento, nps,
   } = dados
 
   const obterCoef = config.tabela
@@ -28,12 +28,11 @@ export function calcularPrestador(dados, config = {}) {
   const cf_reclamacoes   = obterCoef('reclamacoes',  reclamacoes_ratio)
   const cf_tempo_chegada = obterCoef('tempoChegada', tempo_chegada_min)
   const cf_deslocamento  = obterCoef('deslocamento', pct_deslocamento)
-  const cf_reembolso     = obterCoef('reembolso',    pct_reembolso)
   const cf_nps           = obterCoef('nps',          nps)
   const coefSeg = config.coefSeguranca ?? COEF_SEGURANCA
   const cf_seguranca = coefSeg[tipo_servico] ?? 0.85
 
-  const coefs = [cf_recusas, cf_reclamacoes, cf_tempo_chegada, cf_deslocamento, cf_reembolso, cf_nps]
+  const coefs = [cf_recusas, cf_reclamacoes, cf_tempo_chegada, cf_deslocamento, cf_nps]
   const todosPreenchidos = coefs.every(c => c !== null)
 
   const capacidade_real = todosPreenchidos
@@ -44,7 +43,7 @@ export function calcularPrestador(dados, config = {}) {
     servicos_diarios, capacidade_mensal, dedicacao_mawdy,
     pct_mawdy_capacidade, cap_teorica,
     cf_recusas, cf_reclamacoes, cf_tempo_chegada,
-    cf_deslocamento, cf_reembolso, cf_nps, cf_seguranca,
+    cf_deslocamento, cf_nps, cf_seguranca,
     capacidade_real,
   }
 }

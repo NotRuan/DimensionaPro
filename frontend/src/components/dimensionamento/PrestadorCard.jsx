@@ -65,7 +65,7 @@ export function PrestadorCard({ prestador, index, cidade, tipoServico, onUpdate,
                   placeholder="Ex: 2"
                 />
                 <Input
-                  label="Volumetria Total do Prestador"
+                  label="Volumetria Mensal Total do Prestador - Todas congêneres"
                   type="number"
                   required
                   value={prestador.volumetria_total}

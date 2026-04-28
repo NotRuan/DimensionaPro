@@ -304,7 +304,16 @@ async function listarMapa() {
 async function excluir(id, usuario) {
   const dim = await buscarPorId(id, usuario)
   if (usuario.perfil === 'CONSULTOR' && dim.consultor_id !== usuario.id) throw ERRORS.DIM_SEM_PERMISSAO()
-  await registrarEvento(id, usuario, 'EXCLUIDO')
+
+  const tabelasFilhas = ['notificacoes', 'dimensionamento_eventos', 'prestadores_dim']
+  for (const tabela of tabelasFilhas) {
+    const { error } = await supabase
+      .from(tabela)
+      .delete()
+      .eq('dimensionamento_id', id)
+    if (error) throw error
+  }
+
   const { error } = await supabase.from('dimensionamentos').delete().eq('id', id)
   if (error) throw error
 }

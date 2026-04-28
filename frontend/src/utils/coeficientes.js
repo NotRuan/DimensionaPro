@@ -26,13 +26,6 @@ export const TABELA_COEFICIENTES = {
     { min: 25.01, max: 50,       coef: 0.50 },
     { min: 50.01, max: Infinity, coef: 0.10 },
   ],
-  reembolso: [
-    { min: 0,     max: 0,        coef: 1.00 },
-    { min: 0.01,  max: 10,       coef: 0.90 },
-    { min: 10.01, max: 25,       coef: 0.75 },
-    { min: 25.01, max: 50,       coef: 0.50 },
-    { min: 50.01, max: Infinity, coef: 0.10 },
-  ],
   nps: [
     { min: 70,    max: 100,      coef: 1.00 },
     { min: 60,    max: 69.99,    coef: 0.90 },
@@ -62,10 +55,9 @@ export function getCoeficienteFromTabela(metrica, valor, tabela) {
 }
 
 export const TOOLTIPS = {
-  recusas:      'Percentual de serviços recusados. 0–15% → 1,0 | 16–25% → 0,9 | 26–31% → 0,75 | 32–40% → 0,5 | >40% → 0,1',
-  reclamacoes:  'Índice de reclamações (ratio). 0–0,4 → 1,0 | 0,5–1,0 → 0,75 | 1,1–1,6 → 0,5 | >1,6 → 0,1',
-  tempoChegada: 'Tempo médio de chegada em minutos. 0–30 → 1,0 | 31–60 → 0,9 | 61–90 → 0,75 | 91–120 → 0,5 | >120 → 0,1',
-  deslocamento: 'Percentual de serviços com deslocamento cobrado. 0% → 1,0 | 1–10% → 0,9 | 11–25% → 0,75 | 26–50% → 0,5 | >50% → 0,1',
-  reembolso:    'Percentual de serviços que geraram reembolso. 0% → 1,0 | 1–10% → 0,9 | 11–25% → 0,75 | 26–50% → 0,5 | >50% → 0,1',
-  nps:          'Net Promoter Score. 70–100 → 1,0 | 60–69 → 0,9 | 50–59 → 0,75 | <50 → 0,1',
+  recusas:      'Percentual de servicos recusados. 0-15% -> 1,0 | 16-25% -> 0,9 | 26-31% -> 0,75 | 32-40% -> 0,5 | >40% -> 0,1',
+  reclamacoes:  'Indice de reclamacoes (ratio). 0-0,4 -> 1,0 | 0,5-1,0 -> 0,75 | 1,1-1,6 -> 0,5 | >1,6 -> 0,1',
+  tempoChegada: 'Tempo medio de chegada em minutos. 0-30 -> 1,0 | 31-60 -> 0,9 | 61-90 -> 0,75 | 91-120 -> 0,5 | >120 -> 0,1',
+  deslocamento: 'Percentual de servicos com deslocamento cobrado. 0% -> 1,0 | 1-10% -> 0,9 | 11-25% -> 0,75 | 26-50% -> 0,5 | >50% -> 0,1',
+  nps:          'Net Promoter Score. 70-100 -> 1,0 | 60-69 -> 0,9 | 50-59 -> 0,75 | <50 -> 0,1',
 }

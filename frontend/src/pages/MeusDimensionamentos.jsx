@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { dimensionamentosService } from '../services/dimensionamentos.service'
 import { useDimensionamentoStore } from '../store/dimensionamentoStore'
 import { StatusBadge, RevisaoBadge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { Spinner } from '../components/ui/Spinner'
+import { useToast } from '../components/ui/Toast'
 import { fmt } from '../utils/formatters'
 
 const FILTROS = [
@@ -20,9 +21,12 @@ const EDITAVEIS = ['RASCUNHO', 'AJUSTE_SOLICITADO', 'PENDENTE']
 
 export default function MeusDimensionamentos() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const toast = useToast()
   const carregarDimensionamento = useDimensionamentoStore(s => s.carregarDimensionamento)
   const [filtro, setFiltro] = useState('TODOS')
   const [editandoId, setEditandoId] = useState(null)
+  const [excluindoId, setExcluindoId] = useState(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['meus-dimensionamentos'],
@@ -44,6 +48,22 @@ export default function MeusDimensionamentos() {
       navigate('/dimensionamento/novo')
     } finally {
       setEditandoId(null)
+    }
+  }
+
+  const excluir = async (dimensionamento) => {
+    const confirmado = window.confirm(`Excluir o dimensionamento de ${dimensionamento.cidade}? Esta acao nao pode ser desfeita.`)
+    if (!confirmado) return
+
+    setExcluindoId(dimensionamento.id)
+    try {
+      await dimensionamentosService.excluir(dimensionamento.id)
+      await queryClient.invalidateQueries({ queryKey: ['meus-dimensionamentos'] })
+      toast('Dimensionamento excluido com sucesso.', 'success')
+    } catch (e) {
+      toast(e.response?.data?.error?.message || 'Erro ao excluir dimensionamento.', 'error')
+    } finally {
+      setExcluindoId(null)
     }
   }
 
@@ -108,6 +128,14 @@ export default function MeusDimensionamentos() {
                       onClick={() => editar(d.id)}
                     >
                       {editandoId === d.id ? 'Abrindo...' : 'Editar'}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      disabled={excluindoId === d.id}
+                      onClick={() => excluir(d)}
+                    >
+                      {excluindoId === d.id ? 'Excluindo...' : 'Excluir'}
                     </Button>
                   </div>
                 </td>

@@ -8,7 +8,6 @@ const METRICAS = [
   { key: 'reclamacoes',  label: 'Reclamações (ratio)' },
   { key: 'tempoChegada', label: 'Tempo de Chegada (min)' },
   { key: 'deslocamento', label: '% Deslocamento' },
-  { key: 'reembolso',    label: '% Reembolso' },
   { key: 'nps',          label: 'NPS' },
 ]
 

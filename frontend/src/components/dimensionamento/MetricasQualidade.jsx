@@ -10,7 +10,6 @@ const METRICAS = [
   { key: 'reclamacoes_ratio', label: 'Reclamações (ratio)', suffix: '',   coefKey: 'reclamacoes' },
   { key: 'tempo_chegada_min', label: 'Tempo de Chegada',    suffix: 'min', coefKey: 'tempoChegada' },
   { key: 'pct_deslocamento',  label: '% Deslocamento',      suffix: '%',  coefKey: 'deslocamento' },
-  { key: 'pct_reembolso',     label: '% Reembolso',         suffix: '%',  coefKey: 'reembolso' },
   { key: 'nps',               label: 'NPS',                  suffix: '',  coefKey: 'nps' },
 ]
 
@@ -18,7 +17,7 @@ function erroMetrica(key, valor) {
   if (valor === '' || valor == null) return ''
   const n = Number(valor)
   if (Number.isNaN(n)) return 'Valor invalido'
-  if (['pct_recusas', 'pct_deslocamento', 'pct_reembolso'].includes(key) && (n < 0 || n > 100)) return 'Use um percentual entre 0 e 100'
+  if (['pct_recusas', 'pct_deslocamento'].includes(key) && (n < 0 || n > 100)) return 'Use um percentual entre 0 e 100'
   if (key === 'nps' && (n < -100 || n > 100)) return 'Use NPS entre -100 e 100'
   if (key === 'tempo_chegada_min' && n < 0) return 'Tempo nao pode ser negativo'
   if (key === 'reclamacoes_ratio' && n < 0) return 'Valor nao pode ser negativo'

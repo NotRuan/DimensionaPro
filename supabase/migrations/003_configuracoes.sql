@@ -37,13 +37,6 @@ INSERT INTO configuracoes (chave, valor) VALUES
       {"min": 25.01, "max": 50,    "coef": 0.5},
       {"min": 50.01, "max": null,  "coef": 0.1}
     ],
-    "reembolso": [
-      {"min": 0,     "max": 0,     "coef": 1.0},
-      {"min": 0.01,  "max": 10,    "coef": 0.9},
-      {"min": 10.01, "max": 25,    "coef": 0.75},
-      {"min": 25.01, "max": 50,    "coef": 0.5},
-      {"min": 50.01, "max": null,  "coef": 0.1}
-    ],
     "nps": [
       {"min": 70,   "max": 100,   "coef": 1.0},
       {"min": 60,   "max": 69.99, "coef": 0.9},

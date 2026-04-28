@@ -17,7 +17,7 @@ export default function Dimensionamento() {
 
   const prestadores = store.prestadores.filter(p => p.status === 'completo')
   const temMetricasInvalidas = prestadores.some(p => (
-    ['pct_recusas', 'pct_deslocamento', 'pct_reembolso'].some(k => p[k] !== '' && (Number(p[k]) < 0 || Number(p[k]) > 100)) ||
+    ['pct_recusas', 'pct_deslocamento'].some(k => p[k] !== '' && (Number(p[k]) < 0 || Number(p[k]) > 100)) ||
     (p.nps !== '' && (Number(p.nps) < -100 || Number(p.nps) > 100)) ||
     (p.tempo_chegada_min !== '' && Number(p.tempo_chegada_min) < 0) ||
     (p.reclamacoes_ratio !== '' && Number(p.reclamacoes_ratio) < 0)

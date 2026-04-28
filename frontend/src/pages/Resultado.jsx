@@ -4,6 +4,7 @@ import { useDimensionamentoStore } from '../store/dimensionamentoStore'
 import { dimensionamentosService } from '../services/dimensionamentos.service'
 import { exportarPDF } from '../utils/exportPDF'
 import { exportarExcel } from '../utils/exportExcel'
+import { calcularIndiceCidade } from '../utils/calculos'
 import { GraficoCapacidade } from '../components/dimensionamento/ResultadoFinal'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
@@ -27,8 +28,11 @@ export default function Resultado() {
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
 
-  const resultado = store.resultado
   const prestadores = store.prestadores.filter(p => p.status === 'completo')
+  const resultadoAtual = store.demanda
+    ? calcularIndiceCidade(prestadores, store.demanda)
+    : null
+  const resultado = resultadoAtual ?? store.resultado
 
   const handleCalcular = () => {
     if (!store.demanda) return
@@ -53,13 +57,11 @@ export default function Resultado() {
       reclamacoes_ratio:    p.reclamacoes_ratio,
       tempo_chegada_min:    p.tempo_chegada_min,
       pct_deslocamento:     p.pct_deslocamento,
-      pct_reembolso:        p.pct_reembolso,
       nps:                  p.nps,
       cf_recusas:           p.cf_recusas,
       cf_reclamacoes:       p.cf_reclamacoes,
       cf_tempo_chegada:     p.cf_tempo_chegada,
       cf_deslocamento:      p.cf_deslocamento,
-      cf_reembolso:         p.cf_reembolso,
       cf_nps:               p.cf_nps,
       cf_seguranca:         p.cf_seguranca,
       capacidade_real:      p.capacidade_real,
@@ -126,6 +128,7 @@ export default function Resultado() {
   }
 
   const cfg = resultado?.status ? STATUS_CONFIG[resultado.status] : null
+  const storeComResultadoAtual = resultado ? { ...store, resultado } : store
   const demandaNumerica = parseFloat(store.demanda) || 0
   const saldoCapacidade = resultado ? resultado.cap_total - demandaNumerica : 0
   const prestadorCritico = prestadores
@@ -201,10 +204,10 @@ export default function Resultado() {
           <Button variant="ghost" onClick={() => navigate('/dimensionamento/qualidade')}>
             ← Voltar
           </Button>
-          <Button variant="secondary" onClick={() => exportarPDF(store)} disabled={!resultado}>
+          <Button variant="secondary" onClick={() => exportarPDF(storeComResultadoAtual)} disabled={!resultado}>
             📄 PDF
           </Button>
-          <Button variant="secondary" onClick={() => exportarExcel(store)} disabled={!resultado}>
+          <Button variant="secondary" onClick={() => exportarExcel(storeComResultadoAtual)} disabled={!resultado}>
             📊 Excel
           </Button>
         </div>

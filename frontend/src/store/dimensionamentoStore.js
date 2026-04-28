@@ -23,10 +23,9 @@ const novoPrestador = (tipoServico) => ({
   reclamacoes_ratio: '',
   tempo_chegada_min: '',
   pct_deslocamento:  '',
-  pct_reembolso:     '',
   nps:               '',
   cf_recusas: null, cf_reclamacoes: null, cf_tempo_chegada: null,
-  cf_deslocamento: null, cf_reembolso: null, cf_nps: null,
+  cf_deslocamento: null, cf_nps: null,
   cf_seguranca: null, cap_teorica: null, capacidade_real: null,
   expandido: true,
 })
@@ -60,7 +59,6 @@ function prestadorFromDim(p, tipoServico) {
     reclamacoes_ratio: p.reclamacoes_ratio ?? '',
     tempo_chegada_min: p.tempo_chegada_min ?? '',
     pct_deslocamento: p.pct_deslocamento ?? '',
-    pct_reembolso: p.pct_reembolso ?? '',
     nps: p.nps ?? '',
   }
 }

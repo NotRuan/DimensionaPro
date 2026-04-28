@@ -26,7 +26,6 @@ export function exportarExcel(store) {
     'Reclamações':      p.reclamacoes_ratio,
     'TMC (min)':        p.tempo_chegada_min,
     '% Deslocamento':   p.pct_deslocamento,
-    '% Reembolso':      p.pct_reembolso,
   }))
 
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumo),    'Resumo')

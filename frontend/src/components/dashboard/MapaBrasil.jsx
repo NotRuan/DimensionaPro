@@ -55,6 +55,10 @@ function normalizarTexto(valor) {
     .trim()
 }
 
+function corStatus(status, fallback = '#64748B') {
+  return COR_STATUS[normalizarTexto(status)] || fallback
+}
+
 function agruparPorCidade(dados) {
   const map = new Map()
   dados.forEach(d => {
@@ -181,16 +185,17 @@ export function MapaBrasil({ dados, onCidadeClick }) {
             {cidades.map(c => {
               const coords = COORDS_ESTIMADAS[c.cidadeKey]
               if (!coords) return null
+              const statusNormalizado = normalizarTexto(c.status_resultado)
               return (
                 <Marker key={c.cidade} coordinates={coords}>
                   <circle
                     r={5}
-                    fill="#111827"
+                    fill={corStatus(statusNormalizado)}
                     stroke="#fff"
                     strokeWidth={1.5}
                     style={{ cursor: 'pointer' }}
                     onClick={() => onCidadeClick(c.cidade)}
-                    onMouseEnter={e => setTooltip({ x: e.clientX, y: e.clientY, kind: 'cidade', cidade: c.cidade, uf: c.uf, status: c.status_resultado, indice: c.indice_capacidade, tipo: c.tipo_servico })}
+                    onMouseEnter={e => setTooltip({ x: e.clientX, y: e.clientY, kind: 'cidade', cidade: c.cidade, uf: c.uf, status: statusNormalizado, indice: c.indice_capacidade, tipo: c.tipo_servico })}
                     onMouseMove={e => setTooltip(t => t && { ...t, x: e.clientX, y: e.clientY })}
                     onMouseLeave={() => setTooltip(null)}
                   />

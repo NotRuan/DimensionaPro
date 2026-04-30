@@ -1,6 +1,9 @@
 const supabase = require('../config/supabase')
-const { calcularJanela } = require('../utils/janelaReferencia')
 const { ERRORS } = require('../utils/errors')
+
+const ANO_BASE_DIMENSIONAMENTO = 2026
+const SERVICO_COMBINADO = 'ELETRICISTA_ENCANADOR'
+const SERVICOS_DIMENSIONAMENTO = ['ELETRICISTA', 'ENCANADOR']
 
 async function listarCidades() {
   const pageSize = 1000
@@ -33,37 +36,44 @@ async function listarCidades() {
 }
 
 async function buscarVolumetria({ cidade, idprestador, nome_servico }) {
-  const janela = calcularJanela(6)
+  const cidadeNormalizada = cidade.toUpperCase().trim()
+  const servico = String(nome_servico || '').toUpperCase().trim()
+  const servicos = servico === SERVICO_COMBINADO ? SERVICOS_DIMENSIONAMENTO : [servico]
 
-  const { data, error } = await supabase.rpc('buscar_volumetria', {
-    p_cidade:      cidade.toUpperCase().trim(),
-    p_idprestador: parseInt(idprestador),
-    p_servico:     nome_servico.toUpperCase().trim(),
-    p_ano_inicio:  janela.anoInicio,
-    p_mes_inicio:  janela.mesInicio,
-    p_ano_fim:     janela.anoFim,
-    p_mes_fim:     janela.mesFim,
-  })
+  const { data, error } = await supabase
+    .from('prestadores')
+    .select('nome_prestador, nome_servico, servicos_criados, mesn, ano')
+    .eq('cidade', cidadeNormalizada)
+    .eq('idprestador', parseInt(idprestador))
+    .eq('ano', ANO_BASE_DIMENSIONAMENTO)
+    .in('nome_servico', servicos)
 
   if (error) throw error
   if (!data || data.length === 0) {
     throw ERRORS.PRESTADOR_NAO_ENCONTRADO(idprestador, nome_servico, cidade)
   }
 
-  const row = data[0]
+  const totalPorMes = new Map()
+  data.forEach(row => {
+    const mes = Number(row.mesn)
+    if (!mes) return
+    totalPorMes.set(mes, (totalPorMes.get(mes) || 0) + (Number(row.servicos_criados) || 0))
+  })
+
+  const meses = Array.from(totalPorMes.values())
+  const volumeMedio = meses.length > 0
+    ? Math.round(meses.reduce((sum, total) => sum + total, 0) / meses.length)
+    : 0
+
   const resultado = {
     idprestador:         parseInt(idprestador),
-    nome_prestador:      row.nome_prestador,
-    nome_servico:        nome_servico.toUpperCase(),
-    volume_medio_mensal: parseFloat(row.volume_medio_mensal),
-    meses_encontrados:   parseInt(row.meses_encontrados),
-    janela_inicio:       janela.label.split(' a ')[0],
-    janela_fim:          janela.label.split(' a ')[1],
-    janela_label:        janela.label,
-  }
-
-  if (resultado.meses_encontrados < 6) {
-    resultado.aviso = `Apenas ${resultado.meses_encontrados} meses de dados disponíveis. A média pode não ser representativa.`
+    nome_prestador:      data[0].nome_prestador,
+    nome_servico:        servico,
+    volume_medio_mensal: volumeMedio,
+    meses_encontrados:   meses.length,
+    janela_inicio:       `jan/${ANO_BASE_DIMENSIONAMENTO}`,
+    janela_fim:          `dez/${ANO_BASE_DIMENSIONAMENTO}`,
+    janela_label:        `Apenas os dados de ${ANO_BASE_DIMENSIONAMENTO}`,
   }
 
   return resultado
@@ -73,11 +83,15 @@ async function buscarSugestoes({ cidade, nome_servico, q }) {
   const termo = String(q || '').trim()
   if (termo.length < 2) return []
 
+  const servico = String(nome_servico || '').toUpperCase().trim()
+  const servicos = servico === SERVICO_COMBINADO ? SERVICOS_DIMENSIONAMENTO : [servico]
+
   let query = supabase
     .from('prestadores')
     .select('idprestador, nome_prestador, cidade, uf, nome_servico')
     .eq('cidade', cidade.toUpperCase().trim())
-    .eq('nome_servico', nome_servico.toUpperCase().trim())
+    .eq('ano', ANO_BASE_DIMENSIONAMENTO)
+    .in('nome_servico', servicos)
     .limit(50)
 
   query = /^\d+$/.test(termo)
@@ -95,7 +109,7 @@ async function buscarSugestoes({ cidade, nome_servico, q }) {
         nome_prestador: p.nome_prestador,
         cidade: p.cidade,
         uf: p.uf,
-        nome_servico: p.nome_servico,
+        nome_servico: servico,
       })
     }
   })

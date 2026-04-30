@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS dimensionamentos (
   id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   cidade              text NOT NULL,
   uf                  text,
-  tipo_servico        text NOT NULL CHECK (tipo_servico IN ('ELETRICISTA', 'ENCANADOR')),
+  tipo_servico        text NOT NULL CHECK (tipo_servico IN ('ELETRICISTA', 'ENCANADOR', 'ELETRICISTA_ENCANADOR')),
   consultor_id        uuid NOT NULL REFERENCES usuarios(id),
   demanda_cidade      numeric,
   indice_capacidade   numeric,

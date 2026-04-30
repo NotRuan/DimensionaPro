@@ -18,22 +18,22 @@ export function PrestadorCard({ prestador, index, cidade, tipoServico, onUpdate,
             {index + 1}
           </span>
           <span className="text-sm font-medium text-gray-700 flex items-center gap-1">
-            {prestador.status === 'nao_encontrado' && <span className="text-red-500">✕</span>}
-            {prestador.nome_prestador || 'Prestador'} — {tipoServico === 'ELETRICISTA' ? 'Eletricista' : 'Encanador'}
+            {prestador.status === 'nao_encontrado' && <span className="text-red-500">x</span>}
+            {prestador.nome_prestador || 'Prestador'} - Eletricista + Encanador
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => onDuplicate(prestador._id)} className="text-xs text-gray-500 hover:text-gray-700">⧉ Duplicar</button>
+          <button onClick={() => onDuplicate(prestador._id)} className="text-xs text-gray-500 hover:text-gray-700">Duplicar</button>
           {!confirmRemove
-            ? <button onClick={() => setConfirmRemove(true)} className="text-xs text-red-500 hover:text-red-700">✕ Remover</button>
+            ? <button onClick={() => setConfirmRemove(true)} className="text-xs text-red-500 hover:text-red-700">Remover</button>
             : <span className="text-xs flex gap-2 items-center">
                 <span className="text-gray-600">Confirmar?</span>
                 <button onClick={() => onRemove(prestador._id)} className="text-red-600 font-semibold">Sim</button>
-                <button onClick={() => setConfirmRemove(false)} className="text-gray-500">Não</button>
+                <button onClick={() => setConfirmRemove(false)} className="text-gray-500">Nao</button>
               </span>
           }
           <button onClick={() => setExpandido(e => !e)} className="text-gray-400 hover:text-gray-600 ml-2">
-            {expandido ? '▲' : '▼'}
+            {expandido ? 'Recolher' : 'Expandir'}
           </button>
         </div>
       </div>
@@ -49,13 +49,13 @@ export function PrestadorCard({ prestador, index, cidade, tipoServico, onUpdate,
 
           {prestador.status === 'nao_encontrado' && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3 text-sm text-yellow-800">
-              Nenhum dado encontrado para este prestador. Corrija o código acima ou adicione um prestador diferente.
+              Nenhum dado encontrado para este prestador. Corrija o codigo acima ou adicione um prestador diferente.
             </div>
           )}
 
           {(prestador.status === 'encontrado' || prestador.status === 'completo') && (
             <>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <Input
                   label="Qtd. de Profissionais"
                   type="number"
@@ -65,7 +65,7 @@ export function PrestadorCard({ prestador, index, cidade, tipoServico, onUpdate,
                   placeholder="Ex: 2"
                 />
                 <Input
-                  label="Volumetria Mensal Total do Prestador - Todas congêneres"
+                  label="Volumetria Mensal Total do Prestador - Todas congeneres"
                   type="number"
                   required
                   value={prestador.volumetria_total}

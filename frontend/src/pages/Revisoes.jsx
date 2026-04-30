@@ -120,8 +120,7 @@ export default function Revisoes() {
         </select>
         <select value={filtros.tipo_servico} onChange={e => setFiltros(f => ({ ...f, tipo_servico: e.target.value }))} className="px-3 py-2 border border-gray-300 rounded-lg text-sm">
           <option value="">Todos servicos</option>
-          <option value="ELETRICISTA">Eletricista</option>
-          <option value="ENCANADOR">Encanador</option>
+          <option value="ELETRICISTA_ENCANADOR">Eletricista + Encanador</option>
         </select>
         <select value={filtros.uf} onChange={e => setFiltros(f => ({ ...f, uf: e.target.value }))} className="px-3 py-2 border border-gray-300 rounded-lg text-sm">
           <option value="">Todas UFs</option>

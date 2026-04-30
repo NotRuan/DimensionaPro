@@ -34,7 +34,7 @@ export const TABELA_COEFICIENTES = {
   ],
 }
 
-export const COEF_SEGURANCA = { ELETRICISTA: 0.85, ENCANADOR: 0.85 }
+export const COEF_SEGURANCA = { ELETRICISTA: 0.85, ENCANADOR: 0.85, ELETRICISTA_ENCANADOR: 0.85 }
 
 export function getCoeficiente(metrica, valor) {
   if (valor === null || valor === undefined || valor === '') return null

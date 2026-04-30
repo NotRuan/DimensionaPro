@@ -2,7 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 export function GraficoCapacidade({ prestadores, demanda }) {
   const dados = prestadores.map(p => ({
-    name: `${p.nome_prestador.split(' ')[0]} (${p.tipo_servico === 'ELETRICISTA' ? 'El' : 'En'})`,
+    name: `${p.nome_prestador.split(' ')[0]} (El+En)`,
     'Cap. Real': parseFloat(p.capacidade_real?.toFixed(1) ?? 0),
   }))
 

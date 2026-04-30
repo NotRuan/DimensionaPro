@@ -42,7 +42,7 @@ export function BuscaPrestador({ cidade, tipoServico, prestador, onResultado }) 
         nome_prestador: resultado.nome_prestador,
         volume_mawdy:   resultado.volume_medio_mensal,
         meses_encontrados: resultado.meses_encontrados,
-        aviso:          resultado.aviso || null,
+        aviso:          null,
         status:         'encontrado',
       })
     }

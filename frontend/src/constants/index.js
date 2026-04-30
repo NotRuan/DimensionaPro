@@ -1,8 +1,7 @@
 export const PERFIS = { ADM: 'ADM', CONSULTOR: 'CONSULTOR', GERENTE: 'GERENTE' }
 
 export const SERVICOS = [
-  { value: 'ELETRICISTA', label: 'Eletricista' },
-  { value: 'ENCANADOR',   label: 'Encanador' },
+  { value: 'ELETRICISTA_ENCANADOR', label: 'Eletricista + Encanador' },
 ]
 
 export const STATUS_RESULTADO = {

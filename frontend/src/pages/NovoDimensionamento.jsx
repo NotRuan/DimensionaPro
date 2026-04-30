@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useDimensionamentoStore } from '../store/dimensionamentoStore'
@@ -10,32 +10,22 @@ import { SERVICOS } from '../constants'
 import { useAutoSave, loadAutoSave, clearAutoSave } from '../hooks/useAutoSave'
 
 const AUTO_SAVE_KEY = 'dimensionamento-rascunho'
+const SERVICO_COMBINADO = 'ELETRICISTA_ENCANADOR'
 
 export default function NovoDimensionamento() {
   const store = useDimensionamentoStore()
   const navigate = useNavigate()
-  const [filtroCidade, setFiltroCidade] = useState('')
 
   const { data: cidadesData, isLoading: carregandoCidades, isError: erroCidades } = useQuery({
     queryKey: ['cidades'],
     queryFn: () => prestadoresService.cidades().then(r => r.data.data),
   })
-  const cidades = useMemo(() => cidadesData || [], [cidadesData])
-  const cidadesFiltradas = useMemo(() => {
-    const termo = filtroCidade
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toUpperCase()
-      .trim()
 
-    if (!termo) return cidades
-    return cidades.filter(c => `${c.cidade} ${c.uf || ''}`
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toUpperCase()
-      .includes(termo)
-    )
-  }, [cidades, filtroCidade])
+  const cidades = useMemo(() => [...(cidadesData || [])].sort((a, b) => {
+    const cidadeCompare = String(a.cidade || '').localeCompare(String(b.cidade || ''), 'pt-BR')
+    if (cidadeCompare !== 0) return cidadeCompare
+    return String(a.uf || '').localeCompare(String(b.uf || ''), 'pt-BR')
+  }), [cidadesData])
 
   useAutoSave(AUTO_SAVE_KEY, { cidade: store.cidade, uf: store.uf, tipoServico: store.tipoServico, prestadores: store.prestadores })
 
@@ -43,12 +33,13 @@ export default function NovoDimensionamento() {
     const salvo = loadAutoSave(AUTO_SAVE_KEY)
     if (salvo && salvo.cidade && !store.cidade) {
       store.setCidade(salvo.cidade, salvo.uf)
-      store.setTipoServico(salvo.tipoServico)
+      store.setTipoServico(SERVICO_COMBINADO)
+    } else if (!store.tipoServico) {
+      store.setTipoServico(SERVICO_COMBINADO)
     }
-  }, [])
+  }, [store])
 
   const podeAvancar = store.prestadores.some(p => p.status === 'completo')
-  const janela = store.janela
 
   const handleCidadeSelect = (cidade) => {
     if (store.prestadores.length > 0 && cidade !== store.cidade) {
@@ -60,34 +51,18 @@ export default function NovoDimensionamento() {
     store.setCidade(cidade, found?.uf || '')
   }
 
-  const handleTipoServicoSelect = (tipoServico) => {
-    if (store.prestadores.length > 0 && tipoServico !== store.tipoServico) {
-      const confirmar = window.confirm('Alterar o tipo de servico vai limpar os prestadores adicionados. Deseja continuar?')
-      if (!confirmar) return
-      store.limparPrestadores()
-    }
-    store.setTipoServico(tipoServico)
-  }
-
   return (
     <div className="max-w-2xl mx-auto flex flex-col gap-6">
       <div>
         <ProgressSteps current={1} />
         <h1 className="text-xl font-bold text-gray-900 mt-4">{store.modoEdicao ? 'Editar Dimensionamento' : 'Novo Dimensionamento'}</h1>
-        <p className="text-gray-500 text-sm">Preencha os dados do prestador para calcular o índice de capacidade</p>
+        <p className="text-gray-500 text-sm">Preencha os dados do prestador para calcular o indice de capacidade</p>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-gray-700">Cidade <span className="text-teal-700">*</span></label>
-            <input
-              value={filtroCidade}
-              onChange={e => setFiltroCidade(e.target.value)}
-              disabled={carregandoCidades || erroCidades}
-              className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-700"
-              placeholder="Pesquisar por cidade ou UF..."
-            />
             <select
               value={store.cidade}
               onChange={e => handleCidadeSelect(e.target.value)}
@@ -97,7 +72,7 @@ export default function NovoDimensionamento() {
               <option value="">
                 {carregandoCidades ? 'Carregando cidades...' : 'Selecione uma cidade...'}
               </option>
-              {cidadesFiltradas.map(c => (
+              {cidades.map(c => (
                 <option key={`${c.uf || 'UF'}-${c.cidade}`} value={c.cidade}>
                   {c.cidade}{c.uf ? ` - ${c.uf}` : ''}
                 </option>
@@ -110,22 +85,18 @@ export default function NovoDimensionamento() {
               <p className="text-xs text-red-600">Nenhuma cidade cadastrada.</p>
             )}
           </div>
+
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Tipo de Serviço <span className="text-teal-700">*</span></label>
-            <select
-              value={store.tipoServico}
-              onChange={e => handleTipoServicoSelect(e.target.value)}
-              className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-700"
-            >
-              <option value="">Selecione...</option>
-              {SERVICOS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-            </select>
+            <label className="text-sm font-medium text-gray-700">Tipo de Servico <span className="text-teal-700">*</span></label>
+            <div className="px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-700">
+              {SERVICOS[0].label}
+            </div>
           </div>
         </div>
 
         {store.cidade && store.tipoServico && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 text-sm text-blue-700">
-            📅 Considerando média de <strong>{janela.label}</strong> (últimos 6 meses fechados)
+            Apenas os dados de 2026
           </div>
         )}
       </div>
@@ -158,7 +129,7 @@ export default function NovoDimensionamento() {
           Cancelar
         </Button>
         <Button onClick={() => navigate('/dimensionamento/qualidade')} disabled={!podeAvancar}>
-          Avançar para Dimensionamento →
+          Avancar para Dimensionamento
         </Button>
       </div>
     </div>

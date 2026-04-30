@@ -40,6 +40,7 @@ export function Sidebar() {
         {perfil === PERFIS.GERENTE && (
           <>
             <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Revisao</p>
+            <Item to="/gerente/dimensionamentos">Dimensionamentos</Item>
             <Item to="/revisoes">Fila de Revisao</Item>
             <Item to="/notificacoes">Notificacoes</Item>
           </>
@@ -54,6 +55,7 @@ export function Sidebar() {
             <Item to="/admin/configuracoes">Configuracoes</Item>
             <Item to="/admin/auditoria">Auditoria</Item>
             <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Revisao</p>
+            <Item to="/gerente/dimensionamentos">Dimensionamentos</Item>
             <Item to="/revisoes">Fila de Revisao</Item>
           </>
         )}

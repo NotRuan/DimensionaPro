@@ -44,7 +44,7 @@ export function MetricasQualidade({ prestador, onUpdate }) {
   return (
     <div className="border border-gray-200 rounded-xl bg-white shadow-sm p-4">
       <div className="mb-3">
-        <p className="font-semibold text-gray-900">{prestador.nome_prestador} — {tipo_servico === 'ELETRICISTA' ? 'Eletricista' : 'Encanador'}</p>
+        <p className="font-semibold text-gray-900">{prestador.nome_prestador} - Eletricista + Encanador</p>
         <p className="text-sm text-gray-500">Volume MAWDY: {prestador.volume_mawdy} serv/mês · Cap. Teórica: {fmt.numero(cap_teorica, 1)}</p>
       </div>
 

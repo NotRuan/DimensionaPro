@@ -140,7 +140,7 @@ export default function Resultado() {
       <div>
         <ProgressSteps current={3} />
         <h1 className="text-xl font-bold text-gray-900 mt-4">Resultado do Dimensionamento</h1>
-        <p className="text-gray-500 text-sm">{store.cidade} — {store.tipoServico === 'ELETRICISTA' ? 'Eletricista' : 'Encanador'} · {store.janela?.label}</p>
+        <p className="text-gray-500 text-sm">{store.cidade} - Eletricista + Encanador - {store.janela?.label}</p>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3">

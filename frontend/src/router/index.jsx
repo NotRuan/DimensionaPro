@@ -16,6 +16,7 @@ import MeusDimensionamentos from '../pages/MeusDimensionamentos'
 import Notificacoes from '../pages/Notificacoes'
 import Revisoes from '../pages/Revisoes'
 import RevisaoDetalhe from '../pages/RevisaoDetalhe'
+import GerenteDimensionamentos from '../pages/GerenteDimensionamentos'
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
@@ -41,6 +42,7 @@ export const router = createBrowserRouter([
           children: [
             { path: '/revisoes', element: <Revisoes /> },
             { path: '/revisoes/:id', element: <RevisaoDetalhe /> },
+            { path: '/gerente/dimensionamentos', element: <GerenteDimensionamentos /> },
           ],
         },
         {

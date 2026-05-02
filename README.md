@@ -24,6 +24,12 @@ O **DimensionaPro** surge como solução centralizada, oferecendo uma interface 
 3. Como oferecer uma experiência de uso profissional e acessível via web?
 4. Como garantir escalabilidade e disponibilidade com infraestrutura moderna?
 
+<img width="1913" height="906" alt="image" src="https://github.com/user-attachments/assets/41aead3d-f4eb-4db4-a1bf-ccb7374f684b" />
+
+---
+
+<img width="1913" height="905" alt="image" src="https://github.com/user-attachments/assets/312e9b5f-2698-415a-a44e-1804d18baf41" />
+
 ---
 
 ## 🔄 Metodologia
@@ -86,12 +92,4 @@ DimensionaPro/
 │   └── superpowers/ # Documentação de funcionalidades avançadas
 └── .gitignore
 ```
-
----
-
-## 🔗 Contato
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/seu-perfil)
-[![E-mail](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:seu@email.com)
-
 ---
